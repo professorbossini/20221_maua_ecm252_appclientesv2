@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Cliente } from "./cliente.model";
 import { Subject } from "rxjs";
+import { map } from 'rxjs/operators';
 import { HttpClient } from "@angular/common/http";
 
 @Injectable({ providedIn: 'root' })
@@ -12,9 +13,21 @@ export class ClienteService {
 
   getClientes(): void {
     this.httpClient.get<{mensagem: string,
-      clientes: Cliente[]}>('http://localhost:3000/api/clientes').subscribe(
-        (dados) => {
-          this.clientes = dados.clientes;
+      clientes: any}>('http://localhost:3000/api/clientes')
+      // {_id: 1, nome: Ana, fone: 111, email: ana@email.com} => {id: 1, nome: Ana, fone: 111, email: ana@email.com}
+      .pipe(map((dados) => {
+        return dados.clientes.map((cliente => {
+          return {
+            id: cliente._id,
+            nome: cliente.nome,
+            fone: cliente.fone,
+            email: cliente.email
+          }
+        }))  
+      }))      
+      .subscribe(
+        (clientes) => {
+          this.clientes = clientes;
           this.listaClientesAtualizada.next([...this.clientes]);
         }
       )
@@ -40,5 +53,16 @@ export class ClienteService {
 
   getListaDeClientesAtualizadaObservable(){
     return this.listaClientesAtualizada.asObservable();
+  }
+
+  //implementar o método removerCliente
+  //ele recebe o id
+  //faz a requisição http adequada usando o httpClient
+  //exibe uma mensagem confirmando que o cliente de id tal foi removido
+  removerCliente(id: string): void {
+    this.httpClient.delete(`http://localhost:3000/api/clientes/${id}`).subscribe(() => {
+      this.clientes = this.clientes.filter(cli => cli.id !== id)
+      this.listaClientesAtualizada.next([...this.clientes])  
+    })
   }
 }
