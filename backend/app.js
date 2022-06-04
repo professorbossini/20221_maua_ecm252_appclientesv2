@@ -1,8 +1,28 @@
+require('dotenv').config()
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-
+const mongoose = require ('mongoose')
+const Cliente = require ('./models/cliente')
 app.use(bodyParser.json());
+
+const {
+  MONGODB_USER,
+  MONGODB_PASSWORD,
+  MONGODB_CLUSTER,
+  MONGODB_HOST,
+  MONGODB_DATABASE
+} = process.env
+
+mongoose.connect(`mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}.${MONGODB_HOST}.mongodb.net/${MONGODB_DATABASE}?retryWrites=true&w=majority`)
+.then(() => {
+  console.log("Conexão OK")
+})
+.catch((e) => {
+  console.log("Conexão NOK: " + e)
+})
+
+
 
 const clientes = [
   {
@@ -26,13 +46,18 @@ app.use((req, res, next) => {
   next();
 })
 
-app.post('api/clientes', (req, res, next) => {
-  const cliente = req.body;
-  console.log(cliente);
+app.post('/api/clientes', (req, res, next) => {
+  const cli = new Cliente (req.body)
+  // const cliente = new Cliente({
+  //   nome: req.body.nome,
+  //   fone: req.body.fone,
+  //   email: req.body.email
+  // })
+  cli.save()
   res.status(201).json({mensagem: 'Cliente inserido'});
 });
 
-app.use('/api/clientes', (req, res, next) => {
+app.get('/api/clientes', (req, res, next) => {
   res.status(200).json({
     mensagem: 'Tudo OK',
     clientes: clientes

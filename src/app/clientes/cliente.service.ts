@@ -26,9 +26,11 @@ export class ClienteService {
       fone: fone,
       email: email,
     };
+    console.log('vai executar o post')
     this.httpClient.post<{mensagem: string}>('http://localhost:3000/api/clientes',
     cliente).subscribe(
       (dados) => {
+        console.log('executou o post')
         console.log(dados.mensagem);
         this.clientes.push(cliente);
         this.listaClientesAtualizada.next([...this.clientes]);
