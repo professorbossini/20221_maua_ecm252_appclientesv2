@@ -58,10 +58,12 @@ app.post('/api/clientes', (req, res, next) => {
 });
 
 app.get('/api/clientes', (req, res, next) => {
-  res.status(200).json({
-    mensagem: 'Tudo OK',
-    clientes: clientes
-  });
+  Cliente.find().then((documents) => {
+    res.status(200).json({
+      mensagem: 'Tudo OK',
+      clientes: documents
+    });
+  })
 });
 
 module.exports = app;
