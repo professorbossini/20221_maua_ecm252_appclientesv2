@@ -5,7 +5,7 @@
     <hr>
     <p>Email: {{cliente.email}}</p>
     <mat-action-row>
-      <button mat-button color="primary">EDITAR</button>
+      <button [routerLink]="['/editar', cliente.id]" mat-button color="primary">EDITAR</button>
       <button (click)="onDelete(cliente.id)" mat-button color="warn">REMOVER</button>
     </mat-action-row>
   </mat-expansion-panel>

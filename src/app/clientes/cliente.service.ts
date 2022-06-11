@@ -11,6 +11,10 @@ export class ClienteService {
 
   constructor(private httpClient: HttpClient){}
 
+  getCliente (idCliente: string){
+    return {...this.clientes.find(cli => cli.id === idCliente)}
+  }
+
   getClientes(): void {
     this.httpClient.get<{mensagem: string,
       clientes: any}>('http://localhost:3000/api/clientes')
