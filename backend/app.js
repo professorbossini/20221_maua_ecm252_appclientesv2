@@ -48,8 +48,12 @@ app.post('/api/clientes', (req, res, next) => {
   //   fone: req.body.fone,
   //   email: req.body.email
   // })
-  cli.save()
-  res.status(201).json({mensagem: 'Cliente inserido'});
+  cli.save().then(cliInserido => {
+    res.status(201).json({
+      mensagem: 'Cliente inserido',
+      id: cliInserido._id
+    });
+  })
 });
 
 app.get('/api/clientes', (req, res, next) => {
